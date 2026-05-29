@@ -1,0 +1,66 @@
+name: LogicMonitor CSV Import
+
+on:
+  workflow_dispatch:
+    inputs:
+      csv_file:
+        description: "CSV or Excel file path in the repo"
+        required: true
+        default: "LogicMonitor/logicmonitor-import/imports/devices.csv"
+      dry_run:
+        description: "Dry run only - no LogicMonitor changes"
+        required: true
+        type: boolean
+        default: true
+      update_existing:
+        description: "Update existing LogicMonitor records"
+        required: true
+        type: boolean
+        default: false
+      log_level:
+        description: "Logging level"
+        required: true
+        type: choice
+        default: "INFO"
+        options:
+          - DEBUG
+          - INFO
+          - WARNING
+          - ERROR
+
+jobs:
+  import:
+    name: Import devices into LogicMonitor
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Confirm selected import file exists
+        run: |
+          echo "Selected import file: ${{ inputs.csv_file }}"
+          test -f "${{ inputs.csv_file }}"
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r LogicMonitor/logicmonitor-import/requirements.txt
+
+      - name: Run LogicMonitor import
+        env:
+          LM_COMPANY: ${{ secrets.LM_COMPANY }}
+          LM_ACCESS_ID: ${{ secrets.LM_ACCESS_ID }}
+          LM_ACCESS_KEY: ${{ secrets.LM_ACCESS_KEY }}
+        run: |
+          python LogicMonitor/logicmonitor-import/import_devices.py \
+            --file "${{ inputs.csv_file }}" \
+            --dry-run "${{ inputs.dry_run }}" \
+            --update-existing "${{ inputs.update_existing }}" \
+            --log-level "${{ inputs.log_level }}" \
+            --no-log-file
