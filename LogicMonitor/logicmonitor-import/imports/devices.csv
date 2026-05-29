@@ -1,2 +1,0 @@
-﻿IP,DisplayName,HostGroup,CollectorGroupID,Auto-Balanced,CollectorID,kineticit.class,kineticit.subclass,kineticit.supportGroup,kineticit.location,kineticit.hostRole,kineticit.priority,kineticit.environment,kineticit.clientid,Location,kineticit.patching,kineticit.sla,kineticit.alert,kineticit.category
-192.168.150.18,AMS01,Customers/QTS/01. Resources,19,FALSE,19,Server,Windows,KIT - Infrastructure Services,"Western Australia, Australia",NAA,1,Production,QTS,Perth,,TRUE,TRUE,
